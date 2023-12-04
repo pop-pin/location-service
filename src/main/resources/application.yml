@@ -1,0 +1,4 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://user:<password>@pushpin.lgan0wm.mongodb.net/<database??>?retryWrites=true&w=majority
