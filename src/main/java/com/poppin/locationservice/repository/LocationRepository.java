@@ -1,11 +1,13 @@
 package com.poppin.locationservice.repository;
 
-import com.poppin.locationservice.document.LocationInfo;
+import com.poppin.locationservice.document.Location;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationRepository extends MongoRepository<LocationInfo, String> {
-    LocationInfo findLocationInfoByName(String name);
-
+public interface LocationRepository extends MongoRepository<Location, String> {
+    Location findLocationByName(String name);
+    Page<Location> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
