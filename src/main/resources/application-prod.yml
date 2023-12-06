@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    contextPath: /api
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI} # MongoDB URI 설정
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+management:
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+            response:
+              status: true
+      sla:
+        http:
+          server:
+            requests: 100ms,150ms,250ms,500ms,1s
+            response:
+              status: 100ms,150ms,250ms,500ms,1s
+    enable:
+      jvm: true
+      tomcat: true

@@ -1,4 +1,17 @@
+server:
+  port: 8080
+
 spring:
   data:
     mongodb:
       uri: mongodb+srv://user:<password>@pushpin.lgan0wm.mongodb.net/<database??>?retryWrites=true&w=majority
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+

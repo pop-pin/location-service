@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/locations")
+@RequestMapping("v1/location")
 public class LocationController {
 
     private final LocationService locationService;
