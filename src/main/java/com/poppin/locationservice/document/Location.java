@@ -3,35 +3,87 @@ package com.poppin.locationservice.document;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
 
-@Document(collection = "location") // 실제 몽고 DB 컬렉션 이름
+@Document(collection = "place_info")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Location {
     @Id
     private String id;
+    private String businessStatus;
+    private Geometry geometry;
+    private String icon;
+    private String iconBackgroundColor;
+    private String iconMaskBaseUri;
     private String name;
-    private Double rating;
-    private String category;
-    private Integer price; // price range is an integer (0-4)
-    private String areaCode;
-    private String worldCode;
-    private String roadName;
-    private Double latitude;
-    private Double longitude;
+    private String placeId;
+    private PlusCode plusCode;
+    private Long priceLevel;
+    private Long rating;
+    private String reference;
+    private String scope;
+    private List<String> types;
+    private String vicinity;
+    private Metadata metadata;
+
+    @Getter
+    public static class Geometry {
+        private LocationCoordinates location;
+        private Viewport viewport;
+    }
+
+    @Getter
+    public static class LocationCoordinates {
+        private Double lat;
+        private Double lng;
+    }
+
+    @Getter
+    public static class Viewport {
+        private LocationCoordinates northeast;
+        private LocationCoordinates southwest;
+    }
+
+    @Getter
+    public static class PlusCode {
+        private String compoundCode;
+        private String globalCode;
+    }
+
+    @Getter
+    public static class Metadata {
+        private String city;
+        private String time;
+        private Integer pointGeoLatitude;
+        private Integer pointGeoLongitude;
+        private Double pointLatitude;
+        private Double pointLongitude;
+        private Double geoLatitude;
+        private Double geoLongitude;
+        private Integer pointCount;
+        private Integer radius;
+    }
 
     @Builder
-    public Location(String id, String name, Double rating, String category, Integer price, String areaCode, String worldCode, String roadName, Double latitude, Double longitude) {
+    public Location(String id, String businessStatus, Geometry geometry, String icon, String iconBackgroundColor, String iconMaskBaseUri, String name, String placeId, PlusCode plusCode, Long priceLevel, Long rating, String reference, String scope, List<String> types, String vicinity, Metadata metadata) {
         this.id = id;
+        this.businessStatus = businessStatus;
+        this.geometry = geometry;
+        this.icon = icon;
+        this.iconBackgroundColor = iconBackgroundColor;
+        this.iconMaskBaseUri = iconMaskBaseUri;
         this.name = name;
+        this.placeId = placeId;
+        this.plusCode = plusCode;
+        this.priceLevel = priceLevel;
         this.rating = rating;
-        this.category = category;
-        this.price = price;
-        this.areaCode = areaCode;
-        this.worldCode = worldCode;
-        this.roadName = roadName;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.reference = reference;
+        this.scope = scope;
+        this.types = types;
+        this.vicinity = vicinity;
+        this.metadata = metadata;
     }
 }
+
