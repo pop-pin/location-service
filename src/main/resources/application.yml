@@ -1,10 +1,12 @@
 server:
-  port: 8080
+  port: 9005
+  servlet:
+    contextPath: /location
 
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://user:<password>@pushpin.lgan0wm.mongodb.net/<database??>?retryWrites=true&w=majority
+      uri: mongodb://poppin:rkcjseo123!@175.197.99.131:30017/location
 
   servlet:
     multipart:
