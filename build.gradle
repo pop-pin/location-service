@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.google.cloud.tools.jib' version '3.3.1'
 }
 
 group = 'com.poppin'
@@ -24,9 +25,35 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.1.0'
     compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus:1.10.5'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jib {
+    from {
+        image = 'amazoncorretto:17-alpine-jdk'
+    }
+    to {
+        image = 'poppinteam/location-service'
+        tags = ['git rev-parse --verify --short HEAD'.execute().text.trim(), 'latest']
+    }
+    container {
+        ports = ["8080"]
+        jvmFlags = [
+                '-Dspring.profiles.active=prod',
+                '-XX:+UseContainerSupport',
+                '-Dserver.port=8080',
+                '-Dfile.encoding=UTF-8',
+                '-javaagent:/otel/opentelemetry-javaagent.jar',
+                '-Dotel.exporter=otel',
+                '-Dotel.service.name=location-service',
+                '-Dotel.exporter.otlp.endpoint=http://grafana-agent.tempo.svc.cluster.local:4317',
+                '-Dotel.exporter.otlp.insecure=true',
+        ]
+    }
 }
 
 tasks.named('test') {
