@@ -4,8 +4,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: ${MONGO_DB_URI} # MongoDB URI 설정
-
+      uri: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URI}/${MONGODB_DATABASE}
   servlet:
     multipart:
       max-file-size: 100MB
