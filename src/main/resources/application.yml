@@ -6,7 +6,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://poppin:rkcjseo123!@175.197.99.131:30017/location
+      uri: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DATABASE}
 
   servlet:
     multipart:
