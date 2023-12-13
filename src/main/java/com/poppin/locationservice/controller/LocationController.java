@@ -1,5 +1,6 @@
 package com.poppin.locationservice.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.poppin.locationservice.document.Location;
 import com.poppin.locationservice.dto.response.AverageRatingDto;
 import com.poppin.locationservice.dto.response.CustomErrorResponse;
@@ -13,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/location")
 @RequiredArgsConstructor
 public class LocationController {
 
@@ -36,8 +39,8 @@ public class LocationController {
     /**
      * 특정 가게 정보 가져오기
      */
-    @GetMapping("/{location_id}")
-    public ResponseEntity<?> getLocation(@PathVariable("location_id") String id) {
+    @GetMapping("")
+    public ResponseEntity<?> getLocation(@RequestParam("location_id") String id) {
         Optional<Location> locationOpt = locationService.getLocation(id);
         if (locationOpt.isPresent()) {
             LocationResponseDto responseDto = convertToLocationResponseDto(locationOpt.get());
@@ -51,9 +54,7 @@ public class LocationController {
         }
     }
 
-    /**
-     * 구 별로 평균 rating
-     */
+    //서울시 구별로 평균 rating
     @GetMapping("/average-rating")
     public ResponseEntity<?> getAverageRatingByGu() {
         List<AverageRatingDto> averageRatings = locationService.calculateAverageRatingByGu();
@@ -67,7 +68,16 @@ public class LocationController {
         return ResponseEntity.ok(averageRatings);
     }
 
-
+    //맵 정보에 서울시의 구별로 평균 rating 추가해서 반환
+    @GetMapping("/map-info")
+    public ResponseEntity<?> getMapInfo() {
+        try {
+            JsonNode seoulWithRatings = locationService.getSeoulWithAverageRatings();
+            return ResponseEntity.ok(seoulWithRatings);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Error reading seoul.json");
+        }
+    }
 
     /**
      * 가게 정보 업데이트
@@ -113,7 +123,5 @@ public class LocationController {
                 .vicinity(location.getVicinity())
                 .build();
     }
-
-
 
 }
