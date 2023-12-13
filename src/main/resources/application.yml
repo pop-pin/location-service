@@ -1,7 +1,5 @@
 server:
   port: 9005
-  servlet:
-    contextPath: /location
 
 spring:
   data:
