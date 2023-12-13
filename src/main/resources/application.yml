@@ -1,12 +1,10 @@
 server:
   port: 9005
-  servlet:
-    contextPath: /location
 
 spring:
   data:
     mongodb:
-      uri: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DATABASE}
+      uri: mongodb://poppin:rkcjseo123!@175.197.99.131:30017/location
 
   servlet:
     multipart:

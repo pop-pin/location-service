@@ -6,9 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document(collection = "place_info")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
     @Id
     private String id;
@@ -67,8 +66,7 @@ public class Location {
     }
 
     @Builder
-    public Location(String id, String businessStatus, Geometry geometry, String icon, String iconBackgroundColor, String iconMaskBaseUri, String name, String placeId, PlusCode plusCode, Long priceLevel, Long rating, String reference, String scope, List<String> types, String vicinity, Metadata metadata) {
-        this.id = id;
+    public Location(String businessStatus, Geometry geometry, String icon, String iconBackgroundColor, String iconMaskBaseUri, String name, String placeId, PlusCode plusCode, Long priceLevel, Long rating, String reference, String scope, List<String> types, String vicinity, Metadata metadata) {
         this.businessStatus = businessStatus;
         this.geometry = geometry;
         this.icon = icon;

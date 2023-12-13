@@ -1,10 +1,14 @@
 package com.poppin.locationservice.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.poppin.locationservice.document.Location;
 import com.poppin.locationservice.dto.response.AverageRatingDto;
 import com.poppin.locationservice.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.mongodb.core.query.Criteria;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -117,6 +123,24 @@ public class LocationService {
 
         AggregationResults<AverageRatingDto> results = mongoTemplate.aggregate(aggregation, Location.class, AverageRatingDto.class);
         return results.getMappedResults();
+    }
+
+    public JsonNode getSeoulWithAverageRatings() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ClassPathResource resource = new ClassPathResource("seoul.json");
+        JsonNode root = mapper.readTree(resource.getInputStream());
+
+        Map<String, Double> ratingsMap = calculateAverageRatingByGu().stream()
+                .collect(Collectors.toMap(AverageRatingDto::getGu, AverageRatingDto::getAverageRating));
+
+        for (JsonNode feature : root.path("features")) {
+            ObjectNode properties = (ObjectNode) feature.path("properties");
+            String sigKorNm = properties.path("SIG_KOR_NM").asText();
+            Double averageRating = ratingsMap.getOrDefault(sigKorNm, 0.0);
+            properties.put("SIG_AVERAGE_RATING", averageRating);
+        }
+
+        return root;
     }
 
 
