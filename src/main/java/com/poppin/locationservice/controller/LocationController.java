@@ -79,6 +79,13 @@ public class LocationController {
         }
     }
 
+    @GetMapping("/nearby")
+    public ResponseEntity<List<Location>> findNearbyLocations(@RequestParam("lat") double latitude,
+                                                              @RequestParam("lng") double longitude) {
+        List<Location> nearbyLocations = locationService.findLocationsNear(latitude, longitude, 1);
+        return ResponseEntity.ok(nearbyLocations);
+    }
+
     /**
      * 가게 정보 업데이트
      */

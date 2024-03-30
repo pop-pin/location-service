@@ -11,9 +11,13 @@ import org.bson.Document;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -142,6 +146,34 @@ public class LocationService {
 
         return root;
     }
+
+    //GeoJson 형식으로 데이터를 변환하면 사용가능
+    //이 방식이 더 정확도가 높고 연산 시간도 빠르다
+//    public List<Location> findLocationsNear(double latitude, double longitude, double distanceKm) {
+//        Point point = new Point(longitude, latitude);
+//        Distance distance = new Distance(distanceKm, Metrics.KILOMETERS);
+//
+//        Query query = new Query(Criteria.where("geometry.location").nearSphere(point).maxDistance(distance.getNormalizedValue()));
+//        return mongoTemplate.find(query, Location.class);
+//    }
+
+    public List<Location> findLocationsNear(double latitude, double longitude, double distanceKm) {
+        // Fetch all locations (not recommended for large datasets)
+        List<Location> allLocations = mongoTemplate.findAll(Location.class);
+
+        // Filter based on simplified distance calculation
+        return allLocations.stream()
+                .filter(location -> {
+                    double dLat = location.getGeometry().getLocation().getLat() - latitude;
+                    double dLng = location.getGeometry().getLocation().getLng() - longitude;
+                    // Approximating Earth's curvature by using a constant factor; not accurate for large distances
+                    double a = Math.pow(dLat, 2) + Math.pow(dLng, 2);
+                    double distance = Math.sqrt(a) * 111; // Roughly converting degrees to kilometers
+                    return distance <= distanceKm;
+                })
+                .collect(Collectors.toList());
+    }
+
 
 
 //    @Transactional
